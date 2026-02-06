@@ -1,0 +1,5 @@
+{
+  "name": "Cricket Team Generator Gstudio ",
+  "description": "A fast, offline-first tool to manage players, select captains, and automatically generate fair cricket teams with a coin toss feature.",
+  "requestFramePermissions": []
+}
