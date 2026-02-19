@@ -111,9 +111,9 @@ export const Layout: React.FC<LayoutProps> = ({ currentView, onChangeView, onRes
         </nav>
       </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden w-full relative bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950">
-        <div className="h-full w-full max-w-5xl mx-auto">
+      {/* Main Content Area - overflow-hidden to let children scroll */}
+      <main className="flex-1 flex flex-col overflow-hidden w-full relative bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950">
+        <div className="flex-1 w-full max-w-5xl mx-auto overflow-hidden">
           {children}
         </div>
       </main>

@@ -34,8 +34,6 @@ const App: React.FC = () => {
     };
     const updated = savePlayer(newPlayer);
     setPlayers(updated);
-    // Optionally alert user or just navigation happens
-    alert('Player added successfully!');
   };
 
   const handleDeletePlayer = (id: string) => {
@@ -52,17 +50,19 @@ const App: React.FC = () => {
   };
 
   const handleResetAll = () => {
-    clearAllData();
-    setPlayers([]);
-    setMatchState({
-        step: 'select-players',
-        selectedPlayerIds: [],
-        captainAId: null,
-        captainBId: null,
-        lastGeneratedTeams: null,
-        tossResult: null
-    });
-    setCurrentView('create-match');
+    if (window.confirm("Are you sure you want to reset all data? This will delete all players and match history.")) {
+      clearAllData();
+      setPlayers([]);
+      setMatchState({
+          step: 'select-players',
+          selectedPlayerIds: [],
+          captainAId: null,
+          captainBId: null,
+          lastGeneratedTeams: null,
+          tossResult: null
+      });
+      setCurrentView('create-match');
+    }
   };
 
   const handleMatchStateChange = useCallback((newState: Partial<MatchState>) => {

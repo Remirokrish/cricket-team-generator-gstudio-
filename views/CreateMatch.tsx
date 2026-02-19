@@ -93,8 +93,8 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
   // Render Steps
   if (step === 'select-players') {
     return (
-      <div className="flex flex-col h-full bg-slate-950 md:bg-transparent">
-        <div className="p-4 bg-slate-900 shadow-lg md:rounded-xl md:mb-4 sticky top-0 z-10 border-b border-blue-500/20 md:border-blue-500/20">
+      <div className="flex flex-col h-full bg-slate-950">
+        <div className="p-4 bg-slate-900 shadow-lg sticky top-0 z-20 border-b border-blue-500/20">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-bold text-white tracking-wide">Select Players</h2>
             <span className="bg-blue-900/50 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-bold shadow-neon-blue">
@@ -111,7 +111,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-0 md:pb-24">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {players.length === 0 ? (
              <div className="flex flex-col items-center justify-center py-10 text-center text-slate-500">
                 <Users className="w-16 h-16 mb-4 text-slate-700 opacity-50"/>
@@ -119,7 +119,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                 <p className="text-sm">Go to "Add Player" to get started.</p>
              </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-4">
               {players.map(player => {
                 const isSelected = selectedIds.has(player.id);
                 return (
@@ -144,12 +144,13 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
           )}
         </div>
 
-        {/* Sticky Footer */}
-        <div className="p-4 bg-slate-900 border-t border-blue-500/20 sticky bottom-0 z-20 md:relative md:bg-transparent md:border-none md:p-0">
+        {/* Sticky Footer - Always at bottom */}
+        <div className="p-4 bg-slate-900/90 backdrop-blur-md border-t border-blue-500/20 sticky bottom-0 z-20">
            <Button 
              fullWidth 
              onClick={() => setStep('select-captains')}
              disabled={selectedIds.size < 2}
+             className="shadow-neon-blue"
            >
              Next: Captains
              <ChevronRight className="w-4 h-4 ml-2" />
@@ -162,68 +163,71 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
   if (step === 'select-captains') {
     const selectedList = players.filter(p => selectedIds.has(p.id));
     return (
-      <div className="p-4 md:p-6 max-w-2xl mx-auto flex flex-col h-full md:h-auto">
-        <button 
-            onClick={() => setStep('select-players')} 
-            className="text-slate-400 hover:text-white flex items-center mb-6 text-sm font-medium transition-colors"
-        >
-            <ChevronLeft className="w-4 h-4 mr-1"/> Back to Players
-        </button>
+      <div className="flex flex-col h-full bg-slate-950">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="max-w-2xl mx-auto">
+            <button 
+                onClick={() => setStep('select-players')} 
+                className="text-slate-400 hover:text-white flex items-center mb-6 text-sm font-medium transition-colors"
+            >
+                <ChevronLeft className="w-4 h-4 mr-1"/> Back to Players
+            </button>
 
-        <h2 className="text-2xl font-bold mb-8 text-white tracking-wider drop-shadow-lg text-center">
-           CHOOSE <span className="text-blue-500">CAPTAINS</span>
-        </h2>
+            <h2 className="text-2xl font-bold mb-8 text-white tracking-wider drop-shadow-lg text-center">
+               CHOOSE <span className="text-blue-500">CAPTAINS</span>
+            </h2>
 
-        <div className="bg-slate-900 p-8 rounded-2xl shadow-xl border border-blue-500/30 space-y-8 relative overflow-hidden">
-             {/* Decorative glow */}
-            <div className="absolute -top-20 -left-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="bg-slate-900 p-8 rounded-2xl shadow-xl border border-blue-500/30 space-y-8 relative overflow-hidden">
+                <div className="absolute -top-20 -left-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative">
-                <label className="block text-sm font-bold text-blue-300 mb-2 flex items-center gap-2 uppercase tracking-wide">
-                    <Crown className="w-5 h-5 text-yellow-500 fill-yellow-500 drop-shadow-md" /> Captain Team A
-                </label>
-                <select 
-                    value={captainA || ''} 
-                    onChange={(e) => setCaptainA(e.target.value)}
-                    className="w-full p-4 border-2 border-slate-700 bg-slate-950 text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-inner"
-                >
-                    <option value="" className="bg-slate-900">Select Captain A</option>
-                    {selectedList.filter(p => p.id !== captainB).map(p => (
-                        <option key={p.id} value={p.id} className="bg-slate-900">{p.fullName}</option>
-                    ))}
-                </select>
+                <div className="relative">
+                    <label className="block text-sm font-bold text-blue-300 mb-2 flex items-center gap-2 uppercase tracking-wide">
+                        <Crown className="w-5 h-5 text-yellow-500 fill-yellow-500 drop-shadow-md" /> Captain Team A
+                    </label>
+                    <select 
+                        value={captainA || ''} 
+                        onChange={(e) => setCaptainA(e.target.value)}
+                        className="w-full p-4 border-2 border-slate-700 bg-slate-950 text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-inner"
+                    >
+                        <option value="" className="bg-slate-900">Select Captain A</option>
+                        {selectedList.filter(p => p.id !== captainB).map(p => (
+                            <option key={p.id} value={p.id} className="bg-slate-900">{p.fullName}</option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="flex items-center justify-center">
+                    <div className="h-px bg-slate-700 w-full"></div>
+                    <span className="px-4 text-slate-500 font-bold text-xs uppercase">VS</span>
+                    <div className="h-px bg-slate-700 w-full"></div>
+                </div>
+
+                <div className="relative">
+                    <label className="block text-sm font-bold text-cyan-300 mb-2 flex items-center gap-2 uppercase tracking-wide">
+                        <Crown className="w-5 h-5 text-cyan-500 fill-cyan-500 drop-shadow-md" /> Captain Team B
+                    </label>
+                    <select 
+                        value={captainB || ''} 
+                        onChange={(e) => setCaptainB(e.target.value)}
+                        className="w-full p-4 border-2 border-slate-700 bg-slate-950 text-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all shadow-inner"
+                    >
+                        <option value="" className="bg-slate-900">Select Captain B</option>
+                        {selectedList.filter(p => p.id !== captainA).map(p => (
+                            <option key={p.id} value={p.id} className="bg-slate-900">{p.fullName}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
-
-            <div className="flex items-center justify-center">
-                <div className="h-px bg-slate-700 w-full"></div>
-                <span className="px-4 text-slate-500 font-bold text-xs uppercase">VS</span>
-                <div className="h-px bg-slate-700 w-full"></div>
-            </div>
-
-            <div className="relative">
-                <label className="block text-sm font-bold text-cyan-300 mb-2 flex items-center gap-2 uppercase tracking-wide">
-                    <Crown className="w-5 h-5 text-cyan-500 fill-cyan-500 drop-shadow-md" /> Captain Team B
-                </label>
-                <select 
-                    value={captainB || ''} 
-                    onChange={(e) => setCaptainB(e.target.value)}
-                    className="w-full p-4 border-2 border-slate-700 bg-slate-950 text-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all shadow-inner"
-                >
-                    <option value="" className="bg-slate-900">Select Captain B</option>
-                    {selectedList.filter(p => p.id !== captainA).map(p => (
-                        <option key={p.id} value={p.id} className="bg-slate-900">{p.fullName}</option>
-                    ))}
-                </select>
-            </div>
+          </div>
         </div>
 
-        <div className="mt-8">
+        <div className="p-4 bg-slate-900/90 backdrop-blur-md border-t border-blue-500/20 sticky bottom-0 z-20">
             <Button 
                 fullWidth 
                 onClick={generateTeams}
                 disabled={!captainA || !captainB}
-                className="py-4 text-lg"
+                className="py-4 text-lg shadow-neon-blue"
             >
                 <Shuffle className="w-5 h-5 mr-2" />
                 GENERATE TEAMS
@@ -236,7 +240,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
   // View Teams
   if (step === 'view-teams' && teams) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full bg-slate-950">
          <div className="p-4 md:p-6 bg-slate-900 border-b border-blue-500/20 sticky top-0 z-20 flex justify-between items-center shadow-lg">
              <button onClick={() => setStep('select-captains')} className="text-slate-400 hover:text-white text-sm flex items-center font-medium transition-colors">
                  <ChevronLeft className="w-4 h-4 mr-1"/> Edit
@@ -248,7 +252,6 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
          </div>
 
          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-            {/* Common Player Badge */}
             {teams.commonPlayer && (
                 <div className="bg-purple-900/30 border border-purple-500/50 p-3 rounded-lg flex items-center justify-center text-purple-200 text-sm font-bold shadow-[0_0_15px_rgba(168,85,247,0.2)]">
                     <Info className="w-4 h-4 mr-2 text-purple-400" />
@@ -258,7 +261,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
 
             <div className="grid md:grid-cols-2 gap-6">
                 {/* Team A */}
-                <div className="bg-slate-900 rounded-2xl shadow-neon-blue border border-blue-500/50 overflow-hidden flex flex-col h-full relative group">
+                <div className="bg-slate-900 rounded-2xl shadow-neon-blue border border-blue-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"></div>
                     <div className="bg-blue-900/40 p-5 backdrop-blur-sm border-b border-blue-500/30 flex justify-between items-center">
                         <h3 className="font-black text-xl text-blue-100 tracking-wider italic">TEAM A</h3>
@@ -276,7 +279,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                 </div>
 
                 {/* Team B */}
-                <div className="bg-slate-900 rounded-2xl shadow-neon-cyan border border-cyan-500/50 overflow-hidden flex flex-col h-full relative group">
+                <div className="bg-slate-900 rounded-2xl shadow-neon-cyan border border-cyan-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600"></div>
                     <div className="bg-cyan-900/40 p-5 backdrop-blur-sm border-b border-cyan-500/30 flex justify-between items-center">
                         <h3 className="font-black text-xl text-cyan-100 tracking-wider italic">TEAM B</h3>
@@ -295,8 +298,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
             </div>
          </div>
 
-         {/* Actions */}
-         <div className="p-4 bg-slate-900 border-t border-blue-500/20 sticky bottom-0 z-20 md:relative md:bg-transparent md:border-none">
+         <div className="p-4 bg-slate-900/90 backdrop-blur-md border-t border-blue-500/20 sticky bottom-0 z-20">
              <Button variant="outline" fullWidth onClick={generateTeams} className="border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-white">
                  <RefreshCw className="w-4 h-4 mr-2" />
                  RESHUFFLE TEAMS
