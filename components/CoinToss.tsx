@@ -22,9 +22,9 @@ export const CoinToss: React.FC<CoinTossProps> = ({ isOpen, onClose }) => {
     setIsFlipping(true);
     setResult(null);
     
-    // Simulate animation delay
+    
     setTimeout(() => {
-      const outcome = Math.random() > 0.5 ? 'Heads' : 'Tails';
+      const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
       setResult(outcome);
       setIsFlipping(false);
     }, 1500);
