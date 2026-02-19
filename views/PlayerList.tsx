@@ -7,7 +7,7 @@ interface PlayerListProps {
   onDelete: (id: string) => void;
 }
 
-export const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => {
+const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => {
   const [search, setSearch] = useState('');
 
   const filteredPlayers = useMemo(() => {
@@ -25,7 +25,6 @@ export const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => 
       <div className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto min-h-0">
         <h2 className="text-2xl font-bold text-white tracking-wide uppercase">ROSTER ({players.length})</h2>
         
-        {/* Search Bar */}
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
           <input 
@@ -37,8 +36,7 @@ export const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => 
           />
         </div>
 
-        {/* List */}
-        <div className="bg-slate-900 rounded-2xl shadow-lg border border-slate-800 overflow-hidden mb-8">
+        <div className="bg-slate-900 rounded-2xl shadow-lg border border-slate-800 overflow-hidden mb-20">
           {players.length === 0 ? (
             <div className="p-12 text-center text-slate-500">
               <User className="w-16 h-16 mx-auto text-slate-700 mb-4 opacity-50" />
@@ -74,3 +72,5 @@ export const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => 
     </div>
   );
 };
+
+export default PlayerList;

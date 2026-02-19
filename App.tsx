@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Layout } from './components/Layout';
-import { PlayerList } from './views/PlayerList';
-import { AddPlayer } from './views/AddPlayer';
-import { CreateMatch } from './views/CreateMatch';
+import PlayerList from './views/PlayerList';
+import AddPlayer from './views/AddPlayer';
+import CreateMatch from './views/CreateMatch';
 import { Player, MatchState } from './types';
 import { getStoredPlayers, savePlayer, deletePlayer, clearAllData } from './services/storage';
 
@@ -12,7 +12,6 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('create-match');
   const [players, setPlayers] = useState<Player[]>([]);
   
-  // Persist match state so users don't lose progress if they navigate to "Add Player"
   const [matchState, setMatchState] = useState<MatchState>({
     step: 'select-players',
     selectedPlayerIds: [],
@@ -22,7 +21,6 @@ const App: React.FC = () => {
     tossResult: null
   });
 
-  // Load initial data
   useEffect(() => {
     setPlayers(getStoredPlayers());
   }, []);
@@ -40,7 +38,6 @@ const App: React.FC = () => {
     const updated = deletePlayer(id);
     setPlayers(updated);
     
-    // Also remove from match selection if present
     setMatchState(prev => ({
         ...prev,
         selectedPlayerIds: prev.selectedPlayerIds.filter(pid => pid !== id),

@@ -9,12 +9,11 @@ interface AddPlayerProps {
   onDone: () => void;
 }
 
-export const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) => {
+const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Clear success message after 3 seconds
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => setSuccess(''), 3000);
@@ -119,3 +118,5 @@ export const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) 
     </div>
   );
 };
+
+export default AddPlayer;

@@ -10,7 +10,7 @@ interface CreateMatchProps {
   initialState: MatchState;
 }
 
-export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initialState }) => {
+const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initialState }) => {
   const [step, setStep] = useState<MatchState['step']>(initialState.step);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialState.selectedPlayerIds));
   const [captainA, setCaptainA] = useState<string | null>(initialState.captainAId);
@@ -19,7 +19,6 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
   const [showToss, setShowToss] = useState(false);
 
   useEffect(() => {
-    // Sync state back to parent for persistence
     onSaveState({
       step,
       selectedPlayerIds: Array.from(selectedIds),
@@ -29,12 +28,10 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
     });
   }, [step, selectedIds, captainA, captainB, teams, onSaveState]);
 
-  // Step 1 Helpers
   const togglePlayer = (id: string) => {
     const newSelected = new Set(selectedIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);
-      // Deselect as captain if removed
       if (captainA === id) setCaptainA(null);
       if (captainB === id) setCaptainB(null);
     } else {
@@ -53,20 +50,14 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
     }
   };
 
-  // Step 3 Logic: Generate Teams
   const generateTeams = () => {
     if (!captainA || !captainB) return;
 
     const selectedPlayers = players.filter(p => selectedIds.has(p.id));
-    // Exclude captains from pool
     const pool = selectedPlayers.filter(p => p.id !== captainA && p.id !== captainB);
-    
-    // Shuffle pool
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
     
     let common: Player | null = null;
-    
-    // Handle odd number logic
     if (shuffled.length % 2 !== 0) {
         common = shuffled.pop() || null;
     }
@@ -90,36 +81,33 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
     setStep('view-teams');
   };
 
-  // Render Steps
   if (step === 'select-players') {
     return (
-      <div className="flex flex-col h-full bg-slate-950">
-        <div className="p-4 bg-slate-900 shadow-lg sticky top-0 z-20 border-b border-blue-500/20">
+      <div className="flex flex-col h-full bg-slate-950 overflow-hidden">
+        <div className="flex-none p-4 bg-slate-900 shadow-lg border-b border-blue-500/20 z-20">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-bold text-white tracking-wide">Select Players</h2>
             <span className="bg-blue-900/50 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-bold shadow-neon-blue">
               {selectedIds.size} Selected
             </span>
           </div>
-          <div className="flex gap-2">
-             <button 
-                onClick={toggleSelectAll} 
-                className="text-xs font-bold text-cyan-400 hover:text-cyan-300 uppercase tracking-wider"
-              >
-                {selectedIds.size === players.length ? 'Deselect All' : 'Select All'}
-              </button>
-          </div>
+          <button 
+            onClick={toggleSelectAll} 
+            className="text-xs font-bold text-cyan-400 hover:text-cyan-300 uppercase tracking-wider"
+          >
+            {selectedIds.size === players.length ? 'Deselect All' : 'Select All'}
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 no-scrollbar">
           {players.length === 0 ? (
-             <div className="flex flex-col items-center justify-center py-10 text-center text-slate-500">
+             <div className="flex flex-col items-center justify-center py-20 text-center text-slate-500">
                 <Users className="w-16 h-16 mb-4 text-slate-700 opacity-50"/>
                 <p className="text-lg font-medium">No players in master list.</p>
                 <p className="text-sm">Go to "Add Player" to get started.</p>
              </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-32">
               {players.map(player => {
                 const isSelected = selectedIds.has(player.id);
                 return (
@@ -144,8 +132,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
           )}
         </div>
 
-        {/* Sticky Footer - Always at bottom */}
-        <div className="p-4 bg-slate-900/90 backdrop-blur-md border-t border-blue-500/20 sticky bottom-0 z-20">
+        <div className="flex-none px-4 pt-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] md:pb-6 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-20">
            <Button 
              fullWidth 
              onClick={() => setStep('select-captains')}
@@ -163,8 +150,8 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
   if (step === 'select-captains') {
     const selectedList = players.filter(p => selectedIds.has(p.id));
     return (
-      <div className="flex flex-col h-full bg-slate-950">
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex flex-col h-full bg-slate-950 overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
           <div className="max-w-2xl mx-auto">
             <button 
                 onClick={() => setStep('select-players')} 
@@ -177,7 +164,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                CHOOSE <span className="text-blue-500">CAPTAINS</span>
             </h2>
 
-            <div className="bg-slate-900 p-8 rounded-2xl shadow-xl border border-blue-500/30 space-y-8 relative overflow-hidden">
+            <div className="bg-slate-900 p-8 rounded-2xl shadow-xl border border-blue-500/30 space-y-8 relative overflow-hidden mb-10">
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -190,7 +177,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                         onChange={(e) => setCaptainA(e.target.value)}
                         className="w-full p-4 border-2 border-slate-700 bg-slate-950 text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-inner"
                     >
-                        <option value="" className="bg-slate-900">Select Captain A</option>
+                        <option value="" className="bg-slate-900 text-slate-500">Select Captain A</option>
                         {selectedList.filter(p => p.id !== captainB).map(p => (
                             <option key={p.id} value={p.id} className="bg-slate-900">{p.fullName}</option>
                         ))}
@@ -212,7 +199,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                         onChange={(e) => setCaptainB(e.target.value)}
                         className="w-full p-4 border-2 border-slate-700 bg-slate-950 text-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all shadow-inner"
                     >
-                        <option value="" className="bg-slate-900">Select Captain B</option>
+                        <option value="" className="bg-slate-900 text-slate-500">Select Captain B</option>
                         {selectedList.filter(p => p.id !== captainA).map(p => (
                             <option key={p.id} value={p.id} className="bg-slate-900">{p.fullName}</option>
                         ))}
@@ -222,7 +209,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
           </div>
         </div>
 
-        <div className="p-4 bg-slate-900/90 backdrop-blur-md border-t border-blue-500/20 sticky bottom-0 z-20">
+        <div className="flex-none px-4 pt-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] md:pb-6 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-20">
             <Button 
                 fullWidth 
                 onClick={generateTeams}
@@ -237,11 +224,10 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
     );
   }
 
-  // View Teams
   if (step === 'view-teams' && teams) {
     return (
-      <div className="flex flex-col h-full bg-slate-950">
-         <div className="p-4 md:p-6 bg-slate-900 border-b border-blue-500/20 sticky top-0 z-20 flex justify-between items-center shadow-lg">
+      <div className="flex flex-col h-full bg-slate-950 overflow-hidden">
+         <div className="flex-none p-4 md:p-6 bg-slate-900 border-b border-blue-500/20 sticky top-0 z-20 flex justify-between items-center shadow-lg">
              <button onClick={() => setStep('select-captains')} className="text-slate-400 hover:text-white text-sm flex items-center font-medium transition-colors">
                  <ChevronLeft className="w-4 h-4 mr-1"/> Edit
              </button>
@@ -251,7 +237,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
              </button>
          </div>
 
-         <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+         <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
             {teams.commonPlayer && (
                 <div className="bg-purple-900/30 border border-purple-500/50 p-3 rounded-lg flex items-center justify-center text-purple-200 text-sm font-bold shadow-[0_0_15px_rgba(168,85,247,0.2)]">
                     <Info className="w-4 h-4 mr-2 text-purple-400" />
@@ -259,12 +245,11 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                 </div>
             )}
 
-            <div className="grid md:grid-cols-2 gap-6">
-                {/* Team A */}
+            <div className="grid md:grid-cols-2 gap-6 pb-32">
                 <div className="bg-slate-900 rounded-2xl shadow-neon-blue border border-blue-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"></div>
                     <div className="bg-blue-900/40 p-5 backdrop-blur-sm border-b border-blue-500/30 flex justify-between items-center">
-                        <h3 className="font-black text-xl text-blue-100 tracking-wider italic">TEAM A</h3>
+                        <h3 className="font-black text-xl text-blue-100 tracking-wider italic uppercase">TEAM A</h3>
                         <span className="text-xs bg-blue-600/80 text-white px-3 py-1 rounded-full font-bold shadow-md">{teams.teamA.length} Players</span>
                     </div>
                     <ul className="divide-y divide-slate-800 p-2 flex-1 bg-slate-900/50">
@@ -278,11 +263,10 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
                     </ul>
                 </div>
 
-                {/* Team B */}
                 <div className="bg-slate-900 rounded-2xl shadow-neon-cyan border border-cyan-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600"></div>
                     <div className="bg-cyan-900/40 p-5 backdrop-blur-sm border-b border-cyan-500/30 flex justify-between items-center">
-                        <h3 className="font-black text-xl text-cyan-100 tracking-wider italic">TEAM B</h3>
+                        <h3 className="font-black text-xl text-cyan-100 tracking-wider italic uppercase">TEAM B</h3>
                         <span className="text-xs bg-cyan-600/80 text-white px-3 py-1 rounded-full font-bold shadow-md">{teams.teamB.length} Players</span>
                     </div>
                     <ul className="divide-y divide-slate-800 p-2 flex-1 bg-slate-900/50">
@@ -298,7 +282,7 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
             </div>
          </div>
 
-         <div className="p-4 bg-slate-900/90 backdrop-blur-md border-t border-blue-500/20 sticky bottom-0 z-20">
+         <div className="flex-none px-4 pt-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] md:pb-6 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-20">
              <Button variant="outline" fullWidth onClick={generateTeams} className="border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-white">
                  <RefreshCw className="w-4 h-4 mr-2" />
                  RESHUFFLE TEAMS
@@ -312,3 +296,5 @@ export const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, 
 
   return null;
 };
+
+export default CreateMatch;
