@@ -90,9 +90,10 @@ const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-blue-300 mb-3 uppercase tracking-wide">
-                Player Role (Optional)
+              <label className="block text-sm font-bold text-blue-300 mb-2 uppercase tracking-wide flex items-center">
+                Player Role <span className="ml-2 bg-blue-900/50 border border-blue-500/50 px-2 py-0.5 rounded text-[9px] text-blue-300 font-bold">Recommended</span>
               </label>
+              <p className="text-xs text-slate-400 mb-3">Select a role for balanced team generation</p>
               <div className="grid grid-cols-3 gap-2">
                 {roles.map((r) => (
                   <button

@@ -55,23 +55,44 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
 
     const selectedPlayers = players.filter(p => selectedIds.has(p.id));
     const pool = selectedPlayers.filter(p => p.id !== captainA && p.id !== captainB);
-    const shuffled = [...pool].sort(() => Math.random() - 0.5);
     
-    let common: Player | null = null;
-    if (shuffled.length % 2 !== 0) {
-        common = shuffled.pop() || null;
-    }
+    // Group players by role
+    const batsmen = pool.filter(p => p.role === 'Batsman').sort(() => Math.random() - 0.5);
+    const bowlers = pool.filter(p => p.role === 'Bowler').sort(() => Math.random() - 0.5);
+    const allrounders = pool.filter(p => p.role === 'All-rounder').sort(() => Math.random() - 0.5);
+    const noRole = pool.filter(p => !p.role).sort(() => Math.random() - 0.5);
 
-    const mid = Math.floor(shuffled.length / 2);
-    const poolA = shuffled.slice(0, mid);
-    const poolB = shuffled.slice(mid);
+    const teamAPlayers: Player[] = [];
+    const teamBPlayers: Player[] = [];
+
+    // Distribute players while maintaining equal team sizes and role balance
+    const allRoleGroups = [batsmen, bowlers, allrounders, noRole];
+    
+    allRoleGroups.forEach(roleGroup => {
+      roleGroup.forEach((player, index) => {
+        // Alternate players to keep teams balanced
+        if (teamAPlayers.length <= teamBPlayers.length) {
+          teamAPlayers.push(player);
+        } else {
+          teamBPlayers.push(player);
+        }
+      });
+    });
+
+    let common: Player | null = null;
+    // If teams are unequal, move the last player from the larger team to common
+    if (teamAPlayers.length > teamBPlayers.length) {
+      common = teamAPlayers.pop() || null;
+    } else if (teamBPlayers.length > teamAPlayers.length) {
+      common = teamBPlayers.pop() || null;
+    }
 
     const capAObj = players.find(p => p.id === captainA) || null;
     const capBObj = players.find(p => p.id === captainB) || null;
 
     setTeams({
-      teamA: capAObj ? [capAObj, ...poolA] : poolA,
-      teamB: capBObj ? [capBObj, ...poolB] : poolB,
+      teamA: capAObj ? [capAObj, ...teamAPlayers] : teamAPlayers,
+      teamB: capBObj ? [capBObj, ...teamBPlayers] : teamBPlayers,
       captainA: capAObj,
       captainB: capBObj,
       commonPlayer: common,
@@ -255,9 +276,22 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
             <div className="grid md:grid-cols-2 gap-6 pb-32">
                 <div className="bg-slate-900 rounded-2xl shadow-neon-blue border border-blue-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"></div>
-                    <div className="bg-blue-900/40 p-5 backdrop-blur-sm border-b border-blue-500/30 flex justify-between items-center">
-                        <h3 className="font-black text-xl text-blue-100 tracking-wider italic uppercase">TEAM A</h3>
-                        <span className="text-xs bg-blue-600/80 text-white px-3 py-1 rounded-full font-bold shadow-md">{teams.teamA.length} Players</span>
+                    <div className="bg-blue-900/40 p-5 backdrop-blur-sm border-b border-blue-500/30">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="font-black text-xl text-blue-100 tracking-wider italic uppercase">TEAM A</h3>
+                          <span className="text-xs bg-blue-600/80 text-white px-3 py-1 rounded-full font-bold shadow-md">{teams.teamA.length} Players</span>
+                        </div>
+                        <div className="flex gap-2 text-[10px] font-bold">
+                          <span className="bg-blue-900/60 text-blue-300 px-2 py-1 rounded">
+                            🏏 {teams.teamA.filter(p => p.role === 'Batsman').length} Batsmen
+                          </span>
+                          <span className="bg-blue-900/60 text-blue-300 px-2 py-1 rounded">
+                            ⚾ {teams.teamA.filter(p => p.role === 'Bowler').length} Bowlers
+                          </span>
+                          <span className="bg-blue-900/60 text-blue-300 px-2 py-1 rounded">
+                            🌟 {teams.teamA.filter(p => p.role === 'All-rounder').length} All-rounders
+                          </span>
+                        </div>
                     </div>
                     <ul className="divide-y divide-slate-800 p-2 flex-1 bg-slate-900/50">
                         {teams.teamA.map(p => (
@@ -275,9 +309,22 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
 
                 <div className="bg-slate-900 rounded-2xl shadow-neon-cyan border border-cyan-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600"></div>
-                    <div className="bg-cyan-900/40 p-5 backdrop-blur-sm border-b border-cyan-500/30 flex justify-between items-center">
-                        <h3 className="font-black text-xl text-cyan-100 tracking-wider italic uppercase">TEAM B</h3>
-                        <span className="text-xs bg-cyan-600/80 text-white px-3 py-1 rounded-full font-bold shadow-md">{teams.teamB.length} Players</span>
+                    <div className="bg-cyan-900/40 p-5 backdrop-blur-sm border-b border-cyan-500/30">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="font-black text-xl text-cyan-100 tracking-wider italic uppercase">TEAM B</h3>
+                          <span className="text-xs bg-cyan-600/80 text-white px-3 py-1 rounded-full font-bold shadow-md">{teams.teamB.length} Players</span>
+                        </div>
+                        <div className="flex gap-2 text-[10px] font-bold">
+                          <span className="bg-cyan-900/60 text-cyan-300 px-2 py-1 rounded">
+                            🏏 {teams.teamB.filter(p => p.role === 'Batsman').length} Batsmen
+                          </span>
+                          <span className="bg-cyan-900/60 text-cyan-300 px-2 py-1 rounded">
+                            ⚾ {teams.teamB.filter(p => p.role === 'Bowler').length} Bowlers
+                          </span>
+                          <span className="bg-cyan-900/60 text-cyan-300 px-2 py-1 rounded">
+                            🌟 {teams.teamB.filter(p => p.role === 'All-rounder').length} All-rounders
+                          </span>
+                        </div>
                     </div>
                     <ul className="divide-y divide-slate-800 p-2 flex-1 bg-slate-900/50">
                         {teams.teamB.map(p => (
