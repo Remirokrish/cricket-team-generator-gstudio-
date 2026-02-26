@@ -158,6 +158,11 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
               })}
             </div>
           )}
+          <div className="mt-8 pt-6 border-t border-slate-800 text-center">
+            <p className="text-xs text-slate-500 font-medium tracking-wide">
+              Created by Krishnakant Nagpure for all Cricket Lovers
+            </p>
+          </div>
         </div>
 
         <div className="flex-none px-4 py-3 md:py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-50 fixed bottom-0 left-0 right-0 safe-area-inset-bottom">
