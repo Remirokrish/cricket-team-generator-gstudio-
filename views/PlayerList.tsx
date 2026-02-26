@@ -1,14 +1,19 @@
 import React, { useMemo, useState } from 'react';
-import { Trash2, Search, User } from 'lucide-react';
-import { Player } from '../types';
+import { Trash2, Search, User, Edit2, Check, X } from 'lucide-react';
+import { Player, PlayerRole } from '../types';
 
 interface PlayerListProps {
   players: Player[];
   onDelete: (id: string) => void;
+  onUpdate: (player: Player) => void;
 }
 
-const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => {
+const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete, onUpdate }) => {
   const [search, setSearch] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editRole, setEditRole] = useState<PlayerRole | ''>('');
+
+  const roles: PlayerRole[] = ['Batsman', 'Bowler', 'All-rounder'];
 
   const filteredPlayers = useMemo(() => {
     return players.filter(p => p.fullName.toLowerCase().includes(search.toLowerCase()));
@@ -18,6 +23,19 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => {
     if (window.confirm(`Are you sure you want to remove ${name}?`)) {
       onDelete(id);
     }
+  };
+
+  const startEditing = (player: Player) => {
+    setEditingId(player.id);
+    setEditRole(player.role || '');
+  };
+
+  const saveEdit = (player: Player) => {
+    onUpdate({
+      ...player,
+      role: editRole || undefined
+    });
+    setEditingId(null);
   };
 
   return (
@@ -48,23 +66,81 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete }) => {
             </div>
           ) : (
             <ul className="divide-y divide-slate-800">
-              {filteredPlayers.map((player) => (
-                <li key={player.id} className="flex items-center justify-between p-4 hover:bg-slate-800/50 transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400 font-bold text-lg shadow-sm group-hover:border-blue-500 group-hover:text-blue-300 transition-colors">
-                        {player.fullName.charAt(0).toUpperCase()}
+              {filteredPlayers.map((player) => {
+                const isEditing = editingId === player.id;
+                return (
+                  <li key={player.id} className="flex flex-col p-4 hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400 font-bold text-lg shadow-sm group-hover:border-blue-500 group-hover:text-blue-300 transition-colors">
+                            {player.fullName.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-slate-200 text-lg group-hover:text-white transition-colors">{player.fullName}</span>
+                          {!isEditing && player.role && (
+                            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">{player.role}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {isEditing ? (
+                          <>
+                            <button 
+                              onClick={() => saveEdit(player)}
+                              className="p-2 text-emerald-400 hover:bg-emerald-900/20 rounded-lg transition-all"
+                              aria-label="Save role"
+                            >
+                              <Check className="w-5 h-5" />
+                            </button>
+                            <button 
+                              onClick={() => setEditingId(null)}
+                              className="p-2 text-slate-400 hover:bg-slate-800 rounded-lg transition-all"
+                              aria-label="Cancel editing"
+                            >
+                              <X className="w-5 h-5" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button 
+                              onClick={() => startEditing(player)}
+                              className="p-2 text-slate-600 hover:text-blue-400 hover:bg-blue-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                              aria-label="Edit role"
+                            >
+                              <Edit2 className="w-5 h-5" />
+                            </button>
+                            <button 
+                              onClick={() => handleDelete(player.id, player.fullName)}
+                              className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                              aria-label="Delete player"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <span className="font-medium text-slate-200 text-lg group-hover:text-white transition-colors">{player.fullName}</span>
-                  </div>
-                  <button 
-                    onClick={() => handleDelete(player.id, player.fullName)}
-                    className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-                    aria-label="Delete player"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </li>
-              ))}
+                    
+                    {isEditing && (
+                      <div className="mt-4 grid grid-cols-3 gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {roles.map((r) => (
+                          <button
+                            key={r}
+                            onClick={() => setEditRole(editRole === r ? '' : r)}
+                            className={`px-2 py-2 rounded-lg border text-[10px] font-bold transition-all ${
+                              editRole === r
+                                ? 'bg-blue-900/40 border-blue-500 text-blue-300'
+                                : 'bg-slate-950 border-slate-700 text-slate-500 hover:border-slate-600'
+                            }`}
+                          >
+                            {r.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

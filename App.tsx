@@ -3,8 +3,8 @@ import { Layout } from './components/Layout';
 import PlayerList from './views/PlayerList';
 import AddPlayer from './views/AddPlayer';
 import CreateMatch from './views/CreateMatch';
-import { Player, MatchState } from './types';
-import { getStoredPlayers, savePlayer, deletePlayer, clearAllData } from './services/storage';
+import { Player, MatchState, PlayerRole } from './types';
+import { getStoredPlayers, savePlayer, deletePlayer, clearAllData, updatePlayer } from './services/storage';
 
 type View = 'create-match' | 'add-player' | 'player-list';
 
@@ -25,12 +25,18 @@ const App: React.FC = () => {
     setPlayers(getStoredPlayers());
   }, []);
 
-  const handleAddPlayer = (name: string) => {
+  const handleAddPlayer = (name: string, role?: PlayerRole) => {
     const newPlayer: Player = {
       id: Date.now().toString(),
-      fullName: name
+      fullName: name,
+      role
     };
     const updated = savePlayer(newPlayer);
+    setPlayers(updated);
+  };
+
+  const handleUpdatePlayer = (updatedPlayer: Player) => {
+    const updated = updatePlayer(updatedPlayer);
     setPlayers(updated);
   };
 
@@ -92,6 +98,7 @@ const App: React.FC = () => {
         <PlayerList 
           players={players} 
           onDelete={handleDeletePlayer} 
+          onUpdate={handleUpdatePlayer}
         />
       )}
     </Layout>

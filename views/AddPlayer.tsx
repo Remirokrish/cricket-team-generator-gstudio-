@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { UserPlus, Save, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Save, CheckCircle2, User } from 'lucide-react';
 import { Button } from '../components/Button';
-import { Player } from '../types';
+import { Player, PlayerRole } from '../types';
 
 interface AddPlayerProps {
   players: Player[];
-  onAdd: (name: string) => void;
+  onAdd: (name: string, role?: PlayerRole) => void;
   onDone: () => void;
 }
 
 const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) => {
   const [name, setName] = useState('');
+  const [role, setRole] = useState<PlayerRole | ''>('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const roles: PlayerRole[] = ['Batsman', 'Bowler', 'All-rounder'];
 
   useEffect(() => {
     if (success) {
@@ -37,9 +40,10 @@ const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) => {
       return;
     }
 
-    onAdd(trimmed);
+    onAdd(trimmed, role || undefined);
     setSuccess(`${trimmed} added successfully!`);
     setName('');
+    setRole('');
     setError('');
   };
 
@@ -83,21 +87,43 @@ const AddPlayer: React.FC<AddPlayerProps> = ({ players, onAdd, onDone }) => {
                 placeholder="e.g. MS Dhoni"
                 autoFocus
               />
-              
-              {error && (
-                <p className="text-red-400 text-sm mt-2 font-medium flex items-center animate-in fade-in slide-in-from-top-1">
-                  <span className="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>
-                  {error}
-                </p>
-              )}
-              
-              {success && (
-                <p className="text-emerald-400 text-sm mt-2 font-medium flex items-center animate-in fade-in slide-in-from-top-1">
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  {success}
-                </p>
-              )}
             </div>
+
+            <div>
+              <label className="block text-sm font-bold text-blue-300 mb-3 uppercase tracking-wide">
+                Player Role (Optional)
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {roles.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(role === r ? '' : r)}
+                    className={`px-2 py-3 rounded-xl border-2 text-xs font-bold transition-all duration-200 ${
+                      role === r
+                        ? 'bg-blue-900/40 border-blue-500 text-blue-300 shadow-neon-blue'
+                        : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-600 hover:text-slate-400'
+                    }`}
+                  >
+                    {r.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {error && (
+              <p className="text-red-400 text-sm mt-2 font-medium flex items-center animate-in fade-in slide-in-from-top-1">
+                <span className="w-1.5 h-1.5 bg-red-400 rounded-full mr-2"></span>
+                {error}
+              </p>
+            )}
+            
+            {success && (
+              <p className="text-emerald-400 text-sm mt-2 font-medium flex items-center animate-in fade-in slide-in-from-top-1">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                {success}
+              </p>
+            )}
 
             <Button type="submit" fullWidth disabled={!name.trim()} className="py-4">
               <Save className="w-5 h-5 mr-2" />

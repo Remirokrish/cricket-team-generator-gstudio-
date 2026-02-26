@@ -1,6 +1,9 @@
+export type PlayerRole = 'Batsman' | 'Bowler' | 'All-rounder';
+
 export interface Player {
   id: string;
   fullName: string;
+  role?: PlayerRole;
   isSelected?: boolean; // UI state helper
 }
 

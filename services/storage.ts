@@ -27,6 +27,13 @@ export const deletePlayer = (id: string): Player[] => {
   return updated;
 };
 
+export const updatePlayer = (updatedPlayer: Player): Player[] => {
+  const current = getStoredPlayers();
+  const updated = current.map(p => p.id === updatedPlayer.id ? updatedPlayer : p);
+  localStorage.setItem(STORAGE_KEY_PLAYERS, JSON.stringify(updated));
+  return updated;
+};
+
 export const clearAllData = (): void => {
   localStorage.removeItem(STORAGE_KEY_PLAYERS);
   localStorage.removeItem(STORAGE_KEY_MATCH_STATE);
