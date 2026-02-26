@@ -128,7 +128,7 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
                 <p className="text-sm">Go to "Add Player" to get started.</p>
              </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-24">
               {players.map(player => {
                 const isSelected = selectedIds.has(player.id);
                 return (
@@ -160,12 +160,12 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
           )}
         </div>
 
-        <div className="flex-none px-4 py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-20 sticky bottom-0">
+        <div className="flex-none px-4 py-3 md:py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-50 fixed bottom-0 left-0 right-0 safe-area-inset-bottom">
            <Button 
              fullWidth 
              onClick={() => setStep('select-captains')}
              disabled={selectedIds.size < 2}
-             className="shadow-neon-blue py-4"
+             className="shadow-neon-blue py-3 md:py-4 text-base md:text-lg"
            >
              Next: Captains
              <ChevronRight className="w-4 h-4 ml-2" />
@@ -179,7 +179,7 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
     const selectedList = players.filter(p => selectedIds.has(p.id));
     return (
       <div className="flex flex-col h-full bg-slate-950 overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 pb-24">
           <div className="max-w-2xl mx-auto">
             <button 
                 onClick={() => setStep('select-players')} 
@@ -237,12 +237,12 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
           </div>
         </div>
 
-        <div className="flex-none px-4 py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-20 sticky bottom-0">
+        <div className="flex-none px-4 py-3 md:py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-50 fixed bottom-0 left-0 right-0 safe-area-inset-bottom">
             <Button 
                 fullWidth 
                 onClick={generateTeams}
                 disabled={!captainA || !captainB}
-                className="py-4 text-lg shadow-neon-blue"
+                className="py-3 md:py-4 text-base md:text-lg shadow-neon-blue"
             >
                 <Shuffle className="w-5 h-5 mr-2" />
                 GENERATE TEAMS
@@ -273,7 +273,7 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
                 </div>
             )}
 
-            <div className="grid md:grid-cols-2 gap-6 pb-32">
+            <div className="grid md:grid-cols-2 gap-6 pb-20 md:pb-6">
                 <div className="bg-slate-900 rounded-2xl shadow-neon-blue border border-blue-500/50 overflow-hidden flex flex-col h-full relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"></div>
                     <div className="bg-blue-900/40 p-5 backdrop-blur-sm border-b border-blue-500/30">
@@ -342,8 +342,8 @@ const CreateMatch: React.FC<CreateMatchProps> = ({ players, onSaveState, initial
             </div>
          </div>
 
-         <div className="flex-none px-4 py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-20 sticky bottom-0">
-             <Button variant="outline" fullWidth onClick={generateTeams} className="border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-white py-3">
+         <div className="flex-none px-4 py-3 md:py-4 bg-slate-900/95 backdrop-blur-md border-t border-blue-500/20 z-50 fixed bottom-0 left-0 right-0 safe-area-inset-bottom">
+             <Button variant="outline" fullWidth onClick={generateTeams} className="border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-white py-3 md:py-4">
                  <RefreshCw className="w-4 h-4 mr-2" />
                  RESHUFFLE TEAMS
              </Button>

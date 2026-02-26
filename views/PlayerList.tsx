@@ -40,7 +40,7 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete, onUpdate }) 
 
   return (
     <div className="flex flex-col h-full bg-slate-950 overflow-hidden">
-      <div className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto min-h-0">
+      <div className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto min-h-0 pb-4">
         <h2 className="text-2xl font-bold text-white tracking-wide uppercase">ROSTER ({players.length})</h2>
         
         <div className="relative group">
@@ -54,7 +54,7 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, onDelete, onUpdate }) 
           />
         </div>
 
-        <div className="bg-slate-900 rounded-2xl shadow-lg border border-slate-800 overflow-hidden mb-20">
+        <div className="bg-slate-900 rounded-2xl shadow-lg border border-slate-800 overflow-hidden pb-24">
           {players.length === 0 ? (
             <div className="p-12 text-center text-slate-500">
               <User className="w-16 h-16 mx-auto text-slate-700 mb-4 opacity-50" />
